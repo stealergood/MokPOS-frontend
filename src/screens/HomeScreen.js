@@ -1,41 +1,33 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { useSelector } from 'react-redux';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 const HomeScreen = ({ navigation }) => {
-  const orders = useSelector(state => state.orders);
-
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Home</Text>
-      <FlatList
-        data={orders}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => navigation.navigate('OrderDetails', { orderId: item.id })}>
-            <Text style={styles.item}>{item.productName}</Text>
-          </TouchableOpacity>
-        )}
-      />
+      <View style={styles.header}>
+      </View>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Cashier')}
+      >
+        <Text style={styles.link}>Cashier</Text>
+      </TouchableOpacity>
+      <View style={styles.line}></View>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('ListProduct')}
+      >
+        <Text style={styles.link}>Manage Products</Text>
+      </TouchableOpacity>
+      <View style={styles.line}></View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-    textAlign: 'center'
-  },
-  item: {
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd'
-  }
+  container: { flex: 1, padding: 20 },
+  header: { marginBottom: 20 },
+  headerText: { fontSize: 32, fontWeight: 'bold', color: 'black' },
+  link: { fontSize: 24, color: 'black', marginBottom: 20 },
+  line: { borderBottomColor: 'black', borderBottomWidth: 1, marginBottom: 20 },
 });
 
 export default HomeScreen;

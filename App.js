@@ -10,6 +10,8 @@ import HomeScreen from './src/screens/HomeScreen';
 import OrderDetailsScreen from './src/screens/OrderDetailsScreen';
 import PaymentMethodScreen from './src/screens/PaymentMethodScreen';
 import SuccessScreen from './src/screens/SuccessScreen';
+import AddProductScreen from './src/screens/AddProductScreen';
+import ListProductScreen from './src/screens/ListProductScreen';
 
 const Stack = createStackNavigator();
 
@@ -25,6 +27,8 @@ const App = () => {
           <Stack.Screen name="OrderDetails" component={OrderDetailsScreen} />
           <Stack.Screen name="PaymentMethod" component={PaymentMethodScreen} />
           <Stack.Screen name="Success" component={SuccessScreen} />
+          <Stack.Screen name="AddProduct" component={AddProductScreen} />
+          <Stack.Screen name="ListProduct" component={ListProductScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
