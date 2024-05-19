@@ -1,24 +1,25 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, Platform, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
 const AddProductScreen = ({ navigation }) => {
   const [productName, setProductName] = useState('');
   const [sellingPrice, setSellingPrice] = useState('');
   const [category, setCategory] = useState('');
-  const [imageUri, setImageUri] = useState(null);
+  const [image, setImage] = useState(null);
 
-  const handleSaveProduct = () => {
-    const productInfo = {
-      productName,
-      sellingPrice,
-      category,
-      imageUri,
-    };
-    navigation.navigate('ListProduct', { productInfo });
-  };
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert('Sorry, we need camera roll permissions to make this work!');
+        }
+      }
+    })();
+  }, []);
 
-  const handleChooseImage = async () => {
+  const chooseImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -26,37 +27,57 @@ const AddProductScreen = ({ navigation }) => {
       quality: 1,
     });
 
-    if (!result.cancelled) {
-      setImageUri(result.uri);
+    if (!result.canceled) {
+      setImage(result.uri);
     }
+  };
+
+  const handleSubmit = () => {
+    // Handle submit logic here
+    navigation.navigate('ListProduct', {
+      productName,
+      sellingPrice,
+      category,
+      image,
+    });
   };
 
   return (
     <View style={styles.container}>
+      <Text style={styles.label}>Product Name</Text>
       <TextInput
         style={styles.input}
-        placeholder="Product Name"
         value={productName}
         onChangeText={setProductName}
       />
+
+      <Text style={styles.label}>Selling Price</Text>
       <TextInput
         style={styles.input}
-        placeholder="Selling Price"
         value={sellingPrice}
         onChangeText={setSellingPrice}
         keyboardType="numeric"
       />
+
+      <Text style={styles.label}>Category</Text>
       <TextInput
         style={styles.input}
-        placeholder="Category"
         value={category}
         onChangeText={setCategory}
       />
-      <TouchableOpacity onPress={handleChooseImage}>
-        <Text style={styles.chooseImage}>Choose Image</Text>
+
+      <Text style={styles.label}>Image</Text>
+      <TouchableOpacity style={styles.imagePicker} onPress={chooseImage}>
+        {image ? (
+          <Image source={{ uri: image }} style={styles.image} />
+        ) : (
+          <Text style={styles.imagePickerText}>Tap to choose image</Text>
+        )}
       </TouchableOpacity>
-      {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
-      <Button title="Save Product" onPress={handleSaveProduct} />
+
+      <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
+        <Text style={styles.saveButtonText}>Save Product</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -65,24 +86,47 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    justifyContent: 'center',
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 5,
   },
   input: {
-    marginBottom: 10,
-    padding: 10,
-    borderWidth: 1,
+    height: 40,
     borderColor: '#ccc',
+    borderWidth: 1,
+    marginBottom: 20,
+    paddingHorizontal: 10,
     borderRadius: 5,
   },
-  chooseImage: {
-    marginBottom: 10,
-    color: 'blue',
-    textDecorationLine: 'underline',
+  imagePicker: {
+    height: 200,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    borderRadius: 10,
+  },
+  imagePickerText: {
+    color: '#aaa',
+    fontSize: 16,
   },
   image: {
-    width: 200,
-    height: 200,
-    marginBottom: 10,
+    width: '100%',
+    height: '100%',
+    borderRadius: 10,
+  },
+  saveButton: {
+    backgroundColor: '#1E90FF',
+    padding: 15,
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+  saveButtonText: {
+    color: 'white',
+    fontSize: 16,
   },
 });
 
