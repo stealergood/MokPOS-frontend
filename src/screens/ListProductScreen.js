@@ -1,36 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, Button } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
 const ListProductScreen = ({ route, navigation }) => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    if (route.params && route.params.productInfo) {
-      const { productName, sellingPrice, category, imageUri } = route.params.productInfo;
-      setProducts(prevProducts => [...prevProducts, { productName, sellingPrice, category, imageUri }]);
+    if (route.params?.newProduct) {
+      setProducts(prevProducts => [...prevProducts, route.params.newProduct]);
     }
-  }, [route.params]);
+  }, [route.params?.newProduct]);
 
-  const handleAddProduct = () => {
-    navigation.navigate('AddProduct');
-  };
+  const renderItem = ({ item }) => (
+    <View style={styles.productContainer}>
+      {item.image && <Image source={{ uri: item.image }} style={styles.productImage} />}
+      <Text style={styles.productName}>{item.productName}</Text>
+      <Text style={styles.productPrice}>${item.sellingPrice}</Text>
+      <Text style={styles.productCategory}>{item.category}</Text>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>List of Products</Text>
       <FlatList
         data={products}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.product}>
-            <Text>Name: {item.productName}</Text>
-            <Text>Selling Price: {item.sellingPrice}</Text>
-            <Text>Category: {item.category}</Text>
-            {item.imageUri && <Image source={{ uri: item.imageUri }} style={styles.image} />}
-          </View>
-        )}
+        renderItem={renderItem}
       />
-      <Button title="Add Product" onPress={handleAddProduct} color="blue" />
+      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddProduct')}>
+        <Text style={styles.addButtonText}>Add Product</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -40,22 +38,41 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+  productContainer: {
     marginBottom: 20,
-  },
-  product: {
-    marginBottom: 20,
+    padding: 15,
     borderWidth: 1,
     borderColor: '#ccc',
-    padding: 10,
-    borderRadius: 5,
+    borderRadius: 10,
   },
-  image: {
-    width: 100,
-    height: 100,
-    marginTop: 10,
+  productImage: {
+    width: '100%',
+    height: 150,
+    marginBottom: 10,
+    borderRadius: 10,
+  },
+  productName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  productPrice: {
+    fontSize: 16,
+    color: '#888',
+  },
+  productCategory: {
+    fontSize: 14,
+    color: '#666',
+  },
+  addButton: {
+    backgroundColor: '#1E90FF',
+    padding: 15,
+    alignItems: 'center',
+    borderRadius: 5,
+    marginTop: 20,
+  },
+  addButtonText: {
+    color: 'white',
+    fontSize: 16,
   },
 });
 

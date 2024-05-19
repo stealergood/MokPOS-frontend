@@ -33,13 +33,14 @@ const AddProductScreen = ({ navigation }) => {
   };
 
   const handleSubmit = () => {
-    // Handle submit logic here
-    navigation.navigate('ListProduct', {
+    const newProduct = {
       productName,
       sellingPrice,
       category,
       image,
-    });
+    };
+
+    navigation.navigate('ListProduct', { newProduct });
   };
 
   return (
